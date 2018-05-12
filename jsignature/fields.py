@@ -32,7 +32,7 @@ class JSignatureField(models.Field):
         except ValueError:
             raise ValidationError('Invalid JSON format.')
 
-    def from_db_value(self, value, expression, connection):
+    def from_db_value(self, value, expression, connection, context=None):
         if value in JSIGNATURE_EMPTY_VALUES:
             return None
         try:
