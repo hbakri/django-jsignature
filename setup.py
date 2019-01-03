@@ -5,7 +5,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 setup(
     name='django-jsignature',
-    version='0.8',
+    version='0.9',
     author='Florent Lebreton',
     author_email='florent.lebreton@makina-corpus.com',
     url='https://github.com/fle/django-jsignature',
