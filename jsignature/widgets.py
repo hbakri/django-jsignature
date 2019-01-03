@@ -3,9 +3,13 @@
     with jSignature jQuery plugin
 """
 import json
+import six
+
+from django.template.loader import render_to_string
 from django.forms.widgets import HiddenInput
 from django.core import validators
 from django.core.exceptions import ValidationError
+
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from jsignature.settings import JSIGNATURE_DEFAULT_CONFIG
@@ -49,13 +53,13 @@ class JSignatureWidget(HiddenInput):
         """ Prepare value before effectively render widget """
         if value in JSIGNATURE_EMPTY_VALUES:
             return "[]"
-        elif isinstance(value, basestring):
+        elif isinstance(value, six.string_types):
             return value
         elif isinstance(value, list):
             return json.dumps(value)
         raise ValidationError('Invalid format.')
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """ Render widget """
         # Build config
         jsign_id = self.build_jsignature_id(name)
@@ -65,17 +69,14 @@ class JSignatureWidget(HiddenInput):
         value = self.prep_value(value)
 
         # Build output
-        hidden_input = super(JSignatureWidget, self).render(name, value, attrs)
-        div = u'<div id="%s" class="jsign-container"></div>' % jsign_id
-        clr = u''
-        if jsignature_config['ResetButton']:
-            clr = u'<input type="button" value="%s" class="btn">' % _('Reset')
-        js = u'$("#%s").jSignature(%s);' % (
-            jsign_id, json.dumps(jsignature_config))
-        js += u'$("#%s").jSignature("setData", %s,"native");' % (
-            jsign_id, value)
-        js = u'<script type="text/javascript">%s</script>' % js
-        out = u'<div class="jsign-wrapper">%s%s%s%s</div>' % (
-            hidden_input, div, clr, js)
+        context = {
+            'hidden': super(JSignatureWidget, self).render(name, value, attrs),
+            'jsign_id': jsign_id,
+            'reset_btn_text': _('Reset'),
+            'config': jsignature_config,
+            'js_config': mark_safe(json.dumps(jsignature_config)),
+            'value': mark_safe(value),
+        }
+        out = render_to_string('jsignature/widget.html', context)
 
         return mark_safe(out)

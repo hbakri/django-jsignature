@@ -3,8 +3,11 @@
     with jSignature jQuery plugin
 """
 import json
+import six
+
 from django.db import models
 from django.core.exceptions import ValidationError
+
 from .forms import (
     JSignatureField as JSignatureFormField,
     JSIGNATURE_EMPTY_VALUES)
@@ -15,16 +18,11 @@ class JSignatureField(models.Field):
     A model field handling a signature captured with jSignature
     """
     description = "A signature captured with jSignature"
-    __metaclass__ = models.SubfieldBase
 
     def get_internal_type(self):
         return 'TextField'
 
     def to_python(self, value):
-        """
-        Validates that the input can be red as a JSON object. Returns a Python
-        datetime.date object.
-        """
         if value in JSIGNATURE_EMPTY_VALUES:
             return None
         elif isinstance(value, list):
@@ -34,10 +32,18 @@ class JSignatureField(models.Field):
         except ValueError:
             raise ValidationError('Invalid JSON format.')
 
+    def from_db_value(self, value, expression, connection, context=None):
+        if value in JSIGNATURE_EMPTY_VALUES:
+            return None
+        try:
+            return json.loads(value)
+        except ValueError:
+            raise ValidationError('Invalid JSON format.')
+
     def get_prep_value(self, value):
         if value in JSIGNATURE_EMPTY_VALUES:
             return None
-        elif isinstance(value, basestring):
+        elif isinstance(value, six.string_types):
             return value
         elif isinstance(value, list):
             return json.dumps(value)
@@ -48,6 +54,3 @@ class JSignatureField(models.Field):
         defaults.update(kwargs)
         return super(JSignatureField, self).formfield(**defaults)
 
-
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["jsignature.fields.JSignatureField"])

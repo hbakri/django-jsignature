@@ -1,4 +1,7 @@
 import json
+from pyquery import PyQuery as pq
+import six
+
 from django.test import SimpleTestCase
 from django.core.exceptions import ValidationError
 
@@ -37,21 +40,28 @@ class JSignatureWidgetTest(SimpleTestCase):
         self.assertEqual(400, config.get('width'))
         self.assertEqual(JSIGNATURE_HEIGHT, config.get('height'))
 
-    def test_prep_value(self):
+    def test_prep_value_empty_values(self):
         w = JSignatureWidget()
-        # Empty values
         for val in ['', [], '[]']:
             self.assertEqual('[]', w.prep_value(val))
-        # Correct values
+
+    def test_prep_value_correct_values_python(self):
+        w = JSignatureWidget()
         val = [{"x": [1, 2], "y": [3, 4]}]
         val_prep = w.prep_value(val)
-        self.assertIsInstance(val_prep, basestring)
+        self.assertIsInstance(val_prep, six.string_types)
         self.assertEquals(val, json.loads(val_prep))
+
+    def test_prep_value_correct_values_json(self):
+        w = JSignatureWidget()
+        val = [{"x": [1, 2], "y": [3, 4]}]
         val_str = '[{"x":[1,2], "y":[3,4]}]'
         val_prep = w.prep_value(val_str)
-        self.assertIsInstance(val_prep, basestring)
+        self.assertIsInstance(val_prep, six.string_types)
         self.assertEquals(val, json.loads(val_prep))
-        # Incorrect values
+
+    def test_prep_value_incorrect_values(self):
+        w = JSignatureWidget()
         val = type('Foo')
         self.assertRaises(ValidationError, w.prep_value, val)
 
@@ -59,6 +69,15 @@ class JSignatureWidgetTest(SimpleTestCase):
         w = JSignatureWidget()
         output = w.render(name='foo', value=None)
         # Almost useless :/
-        self.assertIn('class="jsign-wrapper"', output)
-        self.assertIn('type="hidden"', output)
-        self.assertIn('type="text/javascript"', output)
+        self.assertEqual(1, len(pq('.jsign-wrapper', output)))
+        self.assertEqual(1, len(pq('[type=hidden]', output)))
+
+    def test_render_reset_button_true(self):
+        w = JSignatureWidget(jsignature_attrs={'ResetButton': True})
+        output = w.render(name='foo', value=None)
+        self.assertEqual(1, len(pq('[type=button]', output)))
+
+    def test_render_reset_button_false(self):
+        w = JSignatureWidget(jsignature_attrs={'ResetButton': False})
+        output = w.render(name='foo', value=None)
+        self.assertEqual(0, len(pq('[type=button]', output)))
