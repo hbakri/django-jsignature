@@ -35,8 +35,8 @@ USAGE
 
     # settings.py
     INSTALLED_APPS = (
-    ...
-    'jsignature',
+        ...
+        'jsignature',
     )
 
 * Use provided form field and widget:
