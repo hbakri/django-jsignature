@@ -19,12 +19,6 @@ It provides:
 INSTALL
 ==================
 
-.. raw:: html
-
-    <font color="blue">Blue word,</font>
-
-And a word without color
-
 For now:
 
 ::
@@ -48,7 +42,7 @@ USAGE
 
 * Use provided form field and widget:
 
-::
+.. code:: python
 
     # forms.py
     from django import forms
