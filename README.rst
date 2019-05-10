@@ -19,6 +19,11 @@ It provides:
 INSTALL
 ==================
 
+.. code:: python
+
+  for i in range(10)
+      print("Hello World")
+
 For now:
 
 ::
