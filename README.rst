@@ -34,6 +34,7 @@ USAGE
 ::
 
     # settings.py
+    :textcolor:`<color_spec> colored text`
     INSTALLED_APPS = (
     ...
     'jsignature',
