@@ -31,10 +31,9 @@ USAGE
 
 * Add ``jsignature`` to your ``INSTALLED_APPS``:
 
-::
+.. code:: python
 
     # settings.py
-    :textcolor:`<#00ff00> colored text`
     INSTALLED_APPS = (
     ...
     'jsignature',
@@ -53,7 +52,7 @@ USAGE
 
 * In your template
 
-::
+.. code:: html
 
     {{ form.media }}
     <form action="." method="POST">
@@ -67,7 +66,7 @@ USAGE
 
 * Render image after form validation:
 
-::
+.. code:: python
 
     # views.py
     from jsignature.utils import draw_signature
