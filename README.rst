@@ -19,9 +19,15 @@ It provides:
 INSTALL
 ==================
 
+.. raw:: html
+
+    <font color="blue">Blue word,</font>
+
+And a word without color
+
 For now:
 
-.. code:: python
+::
 
     pip install django-jsignature
 
