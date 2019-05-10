@@ -19,16 +19,13 @@ It provides:
 INSTALL
 ==================
 
-.. code:: python
-
-  for i in range(10)
-      print("Hello World")
-
 For now:
 
 ::
 
-    pip install django-jsignature
+    .. code:: python
+
+        pip install django-jsignature
 
 ==================
 USAGE
