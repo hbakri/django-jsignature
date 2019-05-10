@@ -21,11 +21,9 @@ INSTALL
 
 For now:
 
-::
+.. code:: python
 
-    .. code:: python
-
-        pip install django-jsignature
+    pip install django-jsignature
 
 ==================
 USAGE
