@@ -19,17 +19,13 @@ It provides:
 INSTALL
 ==================
 
-For now:
+* In your terminal:
 
 ::
 
     pip install django-jsignature
 
-==================
-USAGE
-==================
-
-* Add ``jsignature`` to your ``INSTALLED_APPS``:
+* Add ``'jsignature'`` to your ``INSTALLED_APPS``:
 
 .. code:: python
 
@@ -38,6 +34,10 @@ USAGE
         ...
         'jsignature',
     )
+
+==================
+USAGE
+==================
 
 * Use provided form field and widget:
 
@@ -50,10 +50,11 @@ USAGE
     class SignatureForm(forms.Form):
         signature = JSignatureField()
 
-* In your template
+* In your template:
 
 .. code:: html
 
+    <!-- index.html -->
     {{ form.media }}
     <form action="." method="POST">
         {% for field in form %}
@@ -70,6 +71,8 @@ USAGE
 
     # views.py
     from jsignature.utils import draw_signature
+    import base64
+    from io import BytesIO
     from myapp.forms import SignatureForm
 
     def my_view(request):
@@ -78,7 +81,10 @@ USAGE
             signature = form.cleaned_data.get('signature')
             if signature:
                 # as an image
-                signature_picture = draw_signature(signature)
+                signature_draw = draw_signature(signature)
+                buffer = BytesIO()
+                signature_draw.save(buffer, "PNG")
+                signature_picture = base64.b64encode(buffer.getvalue()).decode('ascii')
                 # or as a file
                 signature_file_path = draw_signature(signature, as_file=True)
 
@@ -90,7 +96,7 @@ JSignature plugin options are available in python:
 
 * Globally, in your settings:
 
-::
+.. code:: python
 
     # settings.py
     JSIGNATURE_WIDTH = 500
@@ -98,7 +104,7 @@ JSignature plugin options are available in python:
 
 * Specifically, in your form:
 
-::
+.. code:: python
 
     # forms.py
     from jsignature.forms import JSignatureField
@@ -121,9 +127,9 @@ Available settings are:
 IN YOUR MODELS
 ==================
 
-If you wan to store signatures, provided mixin gives a ``signature`` and a ``signature_date`` that update themselves:
+If you want to store signatures, provided mixin gives a ``signature`` and a ``signature_date`` that update themselves:
 
-::
+.. code:: python
 
     from django.db import models
     from jsignature.mixins import JSignatureFieldsMixin
@@ -140,6 +146,35 @@ AUTHORS
 
 |makinacom|_
 
-.. |makinacom| image:: http://depot.makina-corpus.org/public/logo.gif
-.. _makinacom:  http://www.makina-corpus.com
+.. |makinacom| raw:: html
+
+    <img src="http://depot.makina-corpus.org/public/logo.gif" height="100px">
+
+.. _makinacom: http://www.makina-corpus.com
+
+
+==================
+UPDATES
+==================
+
+    * Nadine Project <info@nadineproject.org>
+
+|nadineeu|_
+
+.. |nadineeu| raw:: html
+
+    <img src="http://nadine-project.eu/wp-content/uploads/2019/04/NadineV3-36-1.png" height="100px">
+
+.. _nadineeu:  http://nadine-project.eu/
+
+
+    * Hicham Bakri <hicham.bakri@etu.enseeiht.fr>
+
+|enseeihtfr|_
+
+.. |enseeihtfr| raw:: html
+
+    <img src="logoenseeiht.png" height="50px">
+
+.. _enseeihtfr:  http://www.enseeiht.fr/en/index.html
 
